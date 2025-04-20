@@ -25,10 +25,10 @@ export const ModelSelector = (
     } & React.ComponentProps<typeof Button>) => {
         const [open, setOpen] = useState(false)
         const { setModelId } = useChatStore()
-        const [optimisticModelId, setOptimisticModelId] = useState(selectedModelId || 'gpt-4')
+        const [optimisticModelId, setOptimisticModelId] = useState(selectedModelId || 'gpt-4o')
 
         const selectModel = useMemo(
-            () => models.find((model) => model.id === optimisticModelId) || models.find(model => model.id === 'gpt-4'),
+            () => models.find((model) => model.id === optimisticModelId) || models.find(model => model.id === 'gpt-4o'),
             [optimisticModelId]
         )
 
@@ -36,9 +36,9 @@ export const ModelSelector = (
         useEffect(() => {
             if (!selectedModelId) {
                 startTransition(() => {
-                    setOptimisticModelId('gpt-4')
-                    setCookie('modelId', 'gpt-4')
-                    setModelId('gpt-4')
+                    setOptimisticModelId('gpt-4o')
+                    setCookie('modelId', 'gpt-4o')
+                    setModelId('gpt-4o')
                 })
             }
         }, [selectedModelId, setModelId])

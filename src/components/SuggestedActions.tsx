@@ -32,9 +32,9 @@ function PureSuggestedActions({ chatId, append, handleFileClick }: SuggestedActi
             action: 'How to be a software engineer in China?',
         },
         {
-            title: '帮我总结一下这篇pdf',
-            label: '文件名：2024年1月1日',
-            action: '请帮我总结一下我刚刚上传的PDF文件的主要内容',
+            title: 'Please summarize this PDF',
+            label: 'File name: 2024-01-01',
+            action: 'Please summarize the main content of the PDF file I just uploaded',
         },
     ]
 
@@ -52,7 +52,7 @@ function PureSuggestedActions({ chatId, append, handleFileClick }: SuggestedActi
                         variant='ghost'
                         onClick={async (event) => {
                             event.preventDefault()
-                            if (suggestedAction.title === '帮我总结一下这篇pdf') {
+                            if (suggestedAction.title === 'Please summarize this PDF') {
                                 handleFileClick(suggestedAction.action)
                             } else {
                                 window.history.replaceState({}, '', `/chat/${chatId}`)
