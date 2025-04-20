@@ -43,7 +43,7 @@ export function ChatSideBar({ user }: { user: User | undefined }) {
                                 <LogOut
                                     className="h-4 w-4 hover:text-gray-700 cursor-pointer rotate-180"
                                     onClick={() => {
-                                        router.back()
+                                        router.push('/')
                                     }}
                                 />
                                 <span className='text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer'>

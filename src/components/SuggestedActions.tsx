@@ -33,7 +33,7 @@ function PureSuggestedActions({ chatId, append, handleFileClick }: SuggestedActi
         },
         {
             title: 'Please summarize this PDF',
-            label: 'File name: 2024-01-01',
+            label: 'upload a PDF file',
             action: 'Please summarize the main content of the PDF file I just uploaded',
         },
     ]
