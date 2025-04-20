@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react'
 import GradientAvatar from '@/components/GradientAvatar'
 import { useRouter } from 'next/navigation'
 import { application_name } from '@/lib/constant'
-import { GoogleLogin } from './GoogleLogin'
 import { SignInButton } from './SignInButton'
 
 export default function NavBar() {
