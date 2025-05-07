@@ -12,7 +12,6 @@ import {
     ToolInvocation,
     UIMessage,
 } from 'ai'
-import { deepseek } from '@ai-sdk/deepseek'
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
