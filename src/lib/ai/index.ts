@@ -15,7 +15,7 @@ export const customModel = (apiIdentifier: string) => {
             model: openai(apiIdentifier),
             middleware: customMiddleware,
         })
-    } else if (apiIdentifier === 'grok-beta') {
+    } else if (apiIdentifier === 'grok') {
         return wrapLanguageModel({
             model: xai(apiIdentifier),
             middleware: customMiddleware,

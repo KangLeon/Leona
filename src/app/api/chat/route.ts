@@ -23,7 +23,6 @@ import {
 import { auth } from '@/app/(pages)/(auth)/auth'
 import { deleteChat } from '@/app/actions/chat/actions'
 import { customModel } from '@/lib/ai'
-import { openai } from '@ai-sdk/openai'
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
@@ -104,22 +103,7 @@ export async function POST(request: Request) {
                     experimental_transform: smoothStream({ chunking: 'word' }),
                     experimental_generateMessageId: generateUUID,
                     tools: {
-                        // 配置 web_search_preview 工具
-                        web_search_preview: openai.tools.webSearchPreview({
-                            // 可选配置
-                            searchContextSize: 'high', // 获取更多上下文
-                            userLocation: {
-                                type: 'approximate',
-                                city: 'Shanghai', // 可以根据需要更改
-                                region: 'Shanghai',
-                            },
-                        }),
                         getWeather,
-                    },
-                    // 强制使用 web search 工具
-                    toolChoice: {
-                        type: 'tool',
-                        toolName: 'web_search_preview',
                     },
                     onFinish: async ({ response }) => {
                         if (session.user?.id) {

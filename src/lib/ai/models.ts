@@ -27,9 +27,9 @@ export const models: Array<Model> = [
         description: 'For complex, multi-step tasks',
     },
     {
-        id: 'grok-beta',
-        label: 'grok-beta',
-        apiIdentifier: 'grok-beta',
+        id: 'grok',
+        label: 'grok',
+        apiIdentifier: 'grok',
         description: 'For complex, multi-step tasks',
     },
     {
@@ -40,4 +40,4 @@ export const models: Array<Model> = [
     },
 ] as const
 
-export const DEFAULT_MODEL_NAME: string = 'grok-beta'
+export const DEFAULT_MODEL_NAME: string = 'deepseek-chat'

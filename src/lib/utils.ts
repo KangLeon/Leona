@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import confetti from 'canvas-confetti'
-import { openai } from '@ai-sdk/openai'
+import { deepseek } from '@ai-sdk/deepseek'
 
 import { format } from 'date-fns'
 import {
@@ -44,7 +44,7 @@ export async function generateTitleFromUserMessage({
     message: UIMessage
 }) {
     const { text: title } = await generateText({
-        model: openai('gpt-4o'),
+        model: deepseek('deepseek-chat'),
         system: `\n
     - you will generate a short title based on the first message a user begins a conversation with
     - ensure it is not more than 80 characters long
