@@ -51,8 +51,6 @@ class DemoPlayer {
         this.actions = demoData.actions || []
         this.currentIndex = 0
 
-        this.createPlayerUI()
-
         console.log('🎬 演示数据已加载:', this.actions.length, '个动作')
 
         // 通知父窗口数据已加载
@@ -63,76 +61,6 @@ class DemoPlayer {
             },
             '*'
         )
-    }
-
-    createPlayerUI() {
-        // 移除已存在的播放器
-        const existingPlayer = document.getElementById('demo-player-ui')
-        if (existingPlayer) {
-            existingPlayer.remove()
-        }
-
-        this.playerPanel = document.createElement('div')
-        this.playerPanel.id = 'demo-player-ui'
-        this.playerPanel.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            z-index: 10000;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            min-width: 280px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        `
-
-        this.playerPanel.innerHTML = `
-            <div style="margin-bottom: 10px;">
-                <strong>🎬 演示播放中</strong>
-                <button id="demo-close" style="float: right; background: #f44336; color: white; border: none; padding: 2px 8px; border-radius: 3px; cursor: pointer;">✕</button>
-            </div>
-            <div style="margin-bottom: 10px;">
-                <button id="demo-play" style="background: #4CAF50; color: white; border: none; padding: 6px 10px; margin-right: 5px; border-radius: 3px; cursor: pointer; font-size: 12px;">▶ 播放</button>
-                <button id="demo-pause" style="background: #ff9800; color: white; border: none; padding: 6px 10px; margin-right: 5px; border-radius: 3px; cursor: pointer; font-size: 12px;">⏸ 暂停</button>
-                <button id="demo-reset" style="background: #f44336; color: white; border: none; padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">⏹ 重置</button>
-            </div>
-            <div style="margin-bottom: 8px;">
-                <label style="font-size: 12px;">速度: </label>
-                <select id="demo-speed" style="background: #333; color: white; border: 1px solid #555; padding: 2px; font-size: 12px;">
-                    <option value="0.5">0.5x</option>
-                    <option value="1" selected>1x</option>
-                    <option value="2">2x</option>
-                    <option value="4">4x</option>
-                </select>
-            </div>
-            <div id="demo-status" style="font-size: 11px; color: #ccc;">准备播放 (${this.actions.length} 个动作)</div>
-        `
-
-        document.body.appendChild(this.playerPanel)
-        this.bindEvents()
-    }
-
-    bindEvents() {
-        document
-            .getElementById('demo-play')
-            .addEventListener('click', () => this.play())
-        document
-            .getElementById('demo-pause')
-            .addEventListener('click', () => this.pause())
-        document
-            .getElementById('demo-reset')
-            .addEventListener('click', () => this.reset())
-        document
-            .getElementById('demo-close')
-            .addEventListener('click', () => this.destroy())
-        document
-            .getElementById('demo-speed')
-            .addEventListener('change', (e) => {
-                this.playbackSpeed = parseFloat(e.target.value)
-            })
     }
 
     play() {
