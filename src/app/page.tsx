@@ -40,154 +40,61 @@ export default function Home() {
     // 选择pro计划
     const handleChooseProPlan = async () => {}
 
-    // 执行演示动作
-    const executeAction = async (action: DemoAction) => {
-        console.log('🎯 执行动作:', action)
-        setCurrentAction(action)
-
-        try {
-            // 根据选择器找到元素
-            let element: HTMLElement | null = null
-
-            // 尝试不同的选择器策略
-            for (const [selectorType, selectorValue] of Object.entries(
-                action.selectors
-            )) {
-                if (selectorType === 'css' && selectorValue) {
-                    element = document.querySelector(
-                        selectorValue
-                    ) as HTMLElement
-                    if (element) break
-                }
-                if (selectorType === 'xpath' && selectorValue) {
-                    const result = document.evaluate(
-                        selectorValue,
-                        document,
-                        null,
-                        XPathResult.FIRST_ORDERED_NODE_TYPE,
-                        null
-                    )
-                    element = result.singleNodeValue as HTMLElement
-                    if (element) break
-                }
-                if (selectorType === 'text' && selectorValue) {
-                    const elements = Array.from(document.querySelectorAll('*'))
-                    element = elements.find(
-                        (el) => el.textContent?.trim() === selectorValue.trim()
-                    ) as HTMLElement
-                    if (element) break
-                }
-            }
-
-            if (!element) {
-                console.warn('❌ 未找到目标元素:', action.selectors)
-                // 发送失败消息给父窗口
-                window.parent.postMessage(
-                    {
-                        type: 'DEMO_ACTION_FAILED',
-                        error: '未找到目标元素',
-                        action: action,
-                    },
-                    '*'
-                )
-                return
-            }
-
-            // 高亮显示目标元素
-            element.style.outline = '3px solid #ff6b6b'
-            element.style.outlineOffset = '2px'
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-
-            // 等待一下让用户看到高亮
-            await new Promise((resolve) => setTimeout(resolve, 1000))
-
-            // 执行对应的动作
-            switch (action.type) {
-                case 'click':
-                    element.click()
-                    break
-                case 'input':
-                case 'type':
-                    if (
-                        element instanceof HTMLInputElement ||
-                        element instanceof HTMLTextAreaElement
-                    ) {
-                        element.focus()
-                        element.value = action.inputInfo?.value || ''
-                        element.dispatchEvent(
-                            new Event('input', { bubbles: true })
-                        )
-                        element.dispatchEvent(
-                            new Event('change', { bubbles: true })
-                        )
-                    }
-                    break
-                case 'scroll':
-                    element.scrollIntoView({ behavior: 'smooth' })
-                    break
-                default:
-                    console.warn('不支持的动作类型:', action.type)
-            }
-
-            // 移除高亮
-            setTimeout(() => {
-                element!.style.outline = ''
-                element!.style.outlineOffset = ''
-            }, 2000)
-
-            // 发送成功消息给父窗口
-            window.parent.postMessage(
-                {
-                    type: 'DEMO_ACTION_COMPLETED',
-                    action: action,
-                },
-                '*'
-            )
-
-            console.log('✅ 动作执行成功')
-        } catch (error) {
-            console.error('❌ 执行动作失败:', error)
-            // 发送失败消息给父窗口
-            window.parent.postMessage(
-                {
-                    type: 'DEMO_ACTION_FAILED',
-                    error:
-                        error instanceof Error ? error.message : String(error),
-                    action: action,
-                },
-                '*'
-            )
-        }
-    }
-
     // 监听来自父窗口的消息
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
             console.log('🎬 Leona 收到消息:', event.data)
 
             switch (event.data.type) {
-                case 'DEMO_START':
-                    console.log('🎬 演示开始')
+                case 'LOAD_DEMO_DATA':
+                    console.log('🎬 加载演示数据')
                     setDemoMode(true)
-                    // 发送就绪消息
-                    window.parent.postMessage(
-                        {
-                            type: 'DEMO_READY',
-                        },
-                        '*'
+                    setCurrentAction(null)
+                    // DemoPlayer 会自动处理数据加载
+                    break
+
+                case 'DEMO_PLAYER_READY':
+                    console.log('🎬 DemoPlayer 已准备就绪')
+                    break
+
+                case 'DEMO_DATA_LOADED':
+                    console.log(
+                        '🎬 演示数据已加载:',
+                        event.data.actionCount,
+                        '个动作'
                     )
                     break
 
-                case 'DEMO_STOP':
-                    console.log('🛑 演示停止')
-                    setDemoMode(false)
-                    setCurrentAction(null)
+                case 'DEMO_PLAYBACK_STARTED':
+                    console.log('🎬 演示播放开始')
+                    setDemoMode(true)
                     break
 
-                case 'EXECUTE_DEMO_ACTION':
-                    if (event.data.action) {
-                        executeAction(event.data.action)
-                    }
+                case 'DEMO_PLAYBACK_PAUSED':
+                    console.log('⏸ 演示播放暂停')
+                    break
+
+                case 'DEMO_PLAYBACK_COMPLETED':
+                    console.log('🎉 演示播放完成')
+                    break
+
+                case 'DEMO_ACTION_EXECUTING':
+                    console.log('🎯 正在执行动作:', event.data.action)
+                    setCurrentAction(event.data.action)
+                    break
+
+                case 'DEMO_ACTION_COMPLETED':
+                    console.log('✅ 动作执行完成:', event.data.action)
+                    break
+
+                case 'DEMO_ACTION_FAILED':
+                    console.error('❌ 动作执行失败:', event.data.error)
+                    break
+
+                case 'DEMO_PLAYER_DESTROYED':
+                    console.log('🛑 DemoPlayer 已销毁')
+                    setDemoMode(false)
+                    setCurrentAction(null)
                     break
 
                 default:
@@ -198,16 +105,40 @@ export default function Home() {
 
         window.addEventListener('message', handleMessage)
 
-        // 发送初始化完成消息
-        window.parent.postMessage(
-            {
-                type: 'LEONA_READY',
-            },
-            '*'
-        )
+        // 动态加载 demo-player.js
+        const script = document.createElement('script')
+        script.src = '/demo-player.js'
+        script.onload = () => {
+            console.log('🎬 DemoPlayer 脚本加载成功')
+            // 发送初始化完成消息
+            window.parent.postMessage(
+                {
+                    type: 'LEONA_READY',
+                },
+                '*'
+            )
+        }
+        script.onerror = () => {
+            console.error('❌ DemoPlayer 脚本加载失败')
+            // 仍然发送就绪消息，但没有播放功能
+            window.parent.postMessage(
+                {
+                    type: 'LEONA_READY',
+                },
+                '*'
+            )
+        }
+        document.head.appendChild(script)
 
         return () => {
             window.removeEventListener('message', handleMessage)
+            // 清理脚本
+            const existingScript = document.querySelector(
+                'script[src="/demo-player.js"]'
+            )
+            if (existingScript) {
+                existingScript.remove()
+            }
         }
     }, [])
 
