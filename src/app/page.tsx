@@ -15,23 +15,10 @@ import InfiniteScrollColumn, {
 import RotatingText from '@/components/RotatingText'
 import StarBorder from '@/components/StarBorder/StarBorder'
 import Footer from '@/components/Footer'
-import { IframeLoginHandler } from '@/components/IframeLoginHandler'
-
-// 动作接口定义
-interface DemoAction {
-    type: string
-    timestamp: number
-    selectors: Record<string, string>
-    inputInfo?: {
-        value: string
-    }
-}
 
 export default function Home() {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
-    const [demoMode, setDemoMode] = useState(false)
-    const [currentAction, setCurrentAction] = useState<DemoAction | null>(null)
 
     const startFreeTrial = () => {
         setIsLoading(true)
@@ -41,72 +28,8 @@ export default function Home() {
     // 选择pro计划
     const handleChooseProPlan = async () => {}
 
-    // 监听来自父窗口的消息
+    // 动态加载 demo-player.js
     useEffect(() => {
-        const handleMessage = (event: MessageEvent) => {
-            console.log('🎬 Leona 收到消息:', event.data)
-
-            switch (event.data.type) {
-                case 'LOAD_DEMO_DATA':
-                    console.log('🎬 加载演示数据')
-                    setDemoMode(true)
-                    setCurrentAction(null)
-                    // DemoPlayer 会自动处理数据加载
-                    break
-
-                case 'DEMO_PLAYER_READY':
-                    console.log('🎬 DemoPlayer 已准备就绪')
-                    break
-
-                case 'DEMO_DATA_LOADED':
-                    console.log(
-                        '🎬 演示数据已加载:',
-                        event.data.actionCount,
-                        '个动作'
-                    )
-                    break
-
-                case 'DEMO_PLAYBACK_STARTED':
-                    console.log('🎬 演示播放开始')
-                    setDemoMode(true)
-                    break
-
-                case 'DEMO_PLAYBACK_PAUSED':
-                    console.log('⏸ 演示播放暂停')
-                    break
-
-                case 'DEMO_PLAYBACK_COMPLETED':
-                    console.log('🎉 演示播放完成')
-                    break
-
-                case 'DEMO_ACTION_EXECUTING':
-                    console.log('🎯 正在执行动作:', event.data.action)
-                    setCurrentAction(event.data.action)
-                    break
-
-                case 'DEMO_ACTION_COMPLETED':
-                    console.log('✅ 动作执行完成:', event.data.action)
-                    break
-
-                case 'DEMO_ACTION_FAILED':
-                    console.error('❌ 动作执行失败:', event.data.error)
-                    break
-
-                case 'DEMO_PLAYER_DESTROYED':
-                    console.log('🛑 DemoPlayer 已销毁')
-                    setDemoMode(false)
-                    setCurrentAction(null)
-                    break
-
-                default:
-                    // 忽略其他消息
-                    break
-            }
-        }
-
-        window.addEventListener('message', handleMessage)
-
-        // 动态加载 demo-player.js
         const script = document.createElement('script')
         script.src = '/demo-player.js'
         script.onload = () => {
@@ -132,7 +55,6 @@ export default function Home() {
         document.head.appendChild(script)
 
         return () => {
-            window.removeEventListener('message', handleMessage)
             // 清理脚本
             const existingScript = document.querySelector(
                 'script[src="/demo-player.js"]'
@@ -145,24 +67,6 @@ export default function Home() {
 
     return (
         <div className="min-h-screen flex flex-col bg-black text-white relative">
-            {/* iframe 登录状态处理器 */}
-            <IframeLoginHandler />
-
-            {/* 演示模式指示器 */}
-            {demoMode && (
-                <div className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg">
-                    <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                        🎬 演示播放中
-                    </div>
-                    {currentAction && (
-                        <div className="text-xs text-red-100 mt-1">
-                            正在执行: {currentAction.type}
-                        </div>
-                    )}
-                </div>
-            )}
-
             <div className="fixed inset-0 z-0">
                 <Aurora
                     colorStops={['#3A29FF', '#FF94B4', '#FF3232']}
