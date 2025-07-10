@@ -15,6 +15,7 @@ import InfiniteScrollColumn, {
 import RotatingText from '@/components/RotatingText'
 import StarBorder from '@/components/StarBorder/StarBorder'
 import Footer from '@/components/Footer'
+import { IframeLoginHandler } from '@/components/IframeLoginHandler'
 
 // 动作接口定义
 interface DemoAction {
@@ -144,6 +145,9 @@ export default function Home() {
 
     return (
         <div className="min-h-screen flex flex-col bg-black text-white relative">
+            {/* iframe 登录状态处理器 */}
+            <IframeLoginHandler />
+
             {/* 演示模式指示器 */}
             {demoMode && (
                 <div className="fixed top-4 right-4 z-50 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg">

@@ -40,6 +40,37 @@ const authOptions = {
             },
         }),
     ],
+    // 支持 iframe 的配置
+    cookies: {
+        sessionToken: {
+            name: 'next-auth.session-token',
+            options: {
+                httpOnly: true,
+                sameSite: 'none' as const,
+                path: '/',
+                secure: true,
+            },
+        },
+        callbackUrl: {
+            name: 'next-auth.callback-url',
+            options: {
+                sameSite: 'none' as const,
+                path: '/',
+                secure: true,
+            },
+        },
+        csrfToken: {
+            name: 'next-auth.csrf-token',
+            options: {
+                httpOnly: true,
+                sameSite: 'none' as const,
+                path: '/',
+                secure: true,
+            },
+        },
+    },
+    // 信任域名配置
+    trustHost: true,
     callbacks: {
         async signIn({
             user,
