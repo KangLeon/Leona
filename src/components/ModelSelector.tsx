@@ -10,7 +10,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from './ui/dropdown-menu'
-import { models } from '@/lib/ai/models'
+import { DEFAULT_MODEL_ID, models } from '@/lib/ai/models'
 import { cn } from '@/lib/utils'
 
 import { CheckCirclFillIcon, ChevronDownIcon } from './Icon'
@@ -25,13 +25,13 @@ export const ModelSelector = ({
     const [open, setOpen] = useState(false)
     const { setModelId } = useChatStore()
     const [optimisticModelId, setOptimisticModelId] = useState(
-        selectedModelId || 'deepseek-chat'
+        selectedModelId || DEFAULT_MODEL_ID
     )
 
     const selectModel = useMemo(
         () =>
             models.find((model) => model.id === optimisticModelId) ||
-            models.find((model) => model.id === 'deepseek-chat'),
+            models.find((model) => model.id === DEFAULT_MODEL_ID),
         [optimisticModelId]
     )
 
@@ -39,9 +39,9 @@ export const ModelSelector = ({
     useEffect(() => {
         if (!selectedModelId) {
             startTransition(() => {
-                setOptimisticModelId('deepseek-chat')
-                setCookie('modelId', 'deepseek-chat')
-                setModelId('deepseek-chat')
+                setOptimisticModelId(DEFAULT_MODEL_ID)
+                setCookie('modelId', DEFAULT_MODEL_ID)
+                setModelId(DEFAULT_MODEL_ID)
             })
         }
     }, [selectedModelId, setModelId])

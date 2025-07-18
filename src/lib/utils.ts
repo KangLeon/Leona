@@ -12,6 +12,7 @@ import {
     ToolInvocation,
     UIMessage,
 } from 'ai'
+import { defaultModel } from './ai'
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -44,7 +45,7 @@ export async function generateTitleFromUserMessage({
     message: UIMessage
 }) {
     const { text: title } = await generateText({
-        model: deepseek('deepseek-chat'),
+        model: defaultModel,
         system: `\n
     - you will generate a short title based on the first message a user begins a conversation with
     - ensure it is not more than 80 characters long

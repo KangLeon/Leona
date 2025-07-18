@@ -9,35 +9,19 @@ export interface Model {
 
 export const models: Array<Model> = [
     {
-        id: 'gpt-4o-mini',
-        label: 'GPT 4o mini',
-        apiIdentifier: 'gpt-4o-mini',
-        description: 'Small model for fast, lightweight tasks',
-    },
-    {
         id: 'deepseek-chat',
         label: 'DeepSeek Chat',
         apiIdentifier: 'deepseek-chat',
         description: 'For complex, multi-step tasks',
     },
     {
-        id: 'gpt-4o',
-        label: 'GPT 4o',
-        apiIdentifier: 'gpt-4o',
-        description: 'For complex, multi-step tasks',
-    },
-    {
-        id: 'grok',
-        label: 'grok',
-        apiIdentifier: 'grok',
-        description: 'For complex, multi-step tasks',
-    },
-    {
-        id: 'claude-3-5-sonnet',
-        label: 'Claude 3.5 Sonnet',
-        apiIdentifier: 'claude-3-5-sonnet',
+        id: 'claude-4-sonnet-20250514',
+        label: 'Claude 4 Sonnet',
+        apiIdentifier: 'claude-4-sonnet-20250514',
         description: 'Best for coding tasks',
     },
 ] as const
 
 export const DEFAULT_MODEL_NAME: string = 'deepseek-chat'
+export const DEFAULT_MODEL_ID: string = 'deepseek-chat'
+export const DEFAULT_MODEL_LABEL: string = 'DeepSeek Chat'

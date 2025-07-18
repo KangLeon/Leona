@@ -30,8 +30,27 @@ export default function Home() {
 
     // 动态加载 demo-player.js
     useEffect(() => {
+        // 检查是否已经加载过脚本
+        const existingScript = document.querySelector(
+            'script[src="/demo-player.js"]'
+        )
+
+        // 检查是否已经存在 DemoPlayer 实例
+        if (existingScript || (window as any).demoPlayer) {
+            console.log('🎬 DemoPlayer 已存在，跳过加载')
+            // 发送初始化完成消息
+            window.parent.postMessage(
+                {
+                    type: 'LEONA_READY',
+                },
+                '*'
+            )
+            return
+        }
+
         const script = document.createElement('script')
         script.src = '/demo-player.js'
+        script.id = 'demo-player-script' // 添加ID便于识别
         script.onload = () => {
             console.log('🎬 DemoPlayer 脚本加载成功')
             // 发送初始化完成消息
@@ -55,12 +74,20 @@ export default function Home() {
         document.head.appendChild(script)
 
         return () => {
-            // 清理脚本
-            const existingScript = document.querySelector(
-                'script[src="/demo-player.js"]'
-            )
-            if (existingScript) {
-                existingScript.remove()
+            // 清理脚本和实例
+            const scriptToRemove = document.querySelector('#demo-player-script')
+            if (scriptToRemove) {
+                scriptToRemove.remove()
+            }
+
+            // 清理全局实例
+            if ((window as any).demoPlayer) {
+                try {
+                    ;(window as any).demoPlayer.destroy()
+                } catch (error) {
+                    console.warn('清理 DemoPlayer 实例时出错:', error)
+                }
+                delete (window as any).demoPlayer
             }
         }
     }, [])

@@ -1,10 +1,4 @@
-import {
-    appendResponseMessages,
-    createDataStreamResponse,
-    smoothStream,
-    streamText,
-    UIMessage,
-} from 'ai'
+import { smoothStream, streamText, UIMessage } from 'ai'
 import { getWeather } from '@/lib/ai/tools/get-weather'
 
 import {
@@ -23,6 +17,9 @@ import {
 import { auth } from '@/app/(pages)/(auth)/auth'
 import { deleteChat } from '@/app/actions/chat/actions'
 import { customModel } from '@/lib/ai'
+import { anthropic } from '@ai-sdk/anthropic'
+import { openai } from '@ai-sdk/openai'
+import { ChatSDKError } from '@/lib/errors'
 
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
@@ -39,21 +36,18 @@ export async function POST(request: Request) {
     try {
         const {
             id,
-            messages,
+            message,
             selectedChatModel,
         }: {
             id: string
-            messages: Array<UIMessage>
+            message: ChatMessage
             selectedChatModel: string
         } = await request.json()
-
-        console.log('selectedChatModel：', selectedChatModel)
-        console.log('id是：', id)
 
         const session = await auth()
 
         if (!session || !session.user || !session.user.id) {
-            return new Response('Unauthorized', { status: 401 })
+            return new ChatSDKError('unauthorized:chat').toResponse()
         }
 
         const userMessage = getMostRecentUserMessage(messages)
@@ -88,11 +82,22 @@ export async function POST(request: Request) {
                     id: userMessage.id,
                     role: 'user',
                     parts: userMessage.parts,
-                    attachments: userMessage.experimental_attachments ?? [],
+                    attachments: [],
                     createdAt: new Date(),
                 },
             ],
         })
+
+        const uiMessages = [...convertToUIMessages(messagesFromDb), message]
+
+        const { longitude, latitude, city, country } = geolocation(request)
+
+        const requestHints: RequestHints = {
+            longitude,
+            latitude,
+            city,
+            country,
+        }
 
         return createDataStreamResponse({
             execute: (dataStream) => {
@@ -103,48 +108,39 @@ export async function POST(request: Request) {
                     experimental_transform: smoothStream({ chunking: 'word' }),
                     experimental_generateMessageId: generateUUID,
                     tools: {
+                        // 配置 web_search_preview 工具
+                        web_search_preview: openai.tools.webSearchPreview({
+                            // 可选配置
+                            searchContextSize: 'medium', // 获取更多上下文
+                            userLocation: {
+                                type: 'approximate',
+                                city: 'Shanghai', // 可以根据需要更改
+                                region: 'Shanghai',
+                            },
+                        }),
+                        computer: anthropic.tools.computer_20250124({
+                            displayWidthPx: 1920,
+                            displayHeightPx: 1080,
+                            displayNumber: 1,
+                        }),
                         getWeather,
                     },
+                    // 强制使用 web search 工具
+                    //toolChoice: {
+                    //    type: 'tool',
+                    //    toolName: 'web_search_preview',
+                    //},
                     onFinish: async ({ response }) => {
-                        if (session.user?.id) {
-                            try {
-                                const assistantId = getTrailingMessageId({
-                                    messages: response.messages.filter(
-                                        (message) =>
-                                            message.role === 'assistant'
-                                    ),
-                                })
-
-                                if (!assistantId) {
-                                    throw new Error(
-                                        'No assistant message found!'
-                                    )
-                                }
-
-                                const [, assistantMessage] =
-                                    appendResponseMessages({
-                                        messages: [userMessage],
-                                        responseMessages: response.messages,
-                                    })
-
-                                await saveMessages({
-                                    messages: [
-                                        {
-                                            id: assistantId,
-                                            chatId: id,
-                                            role: assistantMessage.role,
-                                            parts: assistantMessage.parts,
-                                            attachments:
-                                                assistantMessage.experimental_attachments ??
-                                                [],
-                                            createdAt: new Date(),
-                                        },
-                                    ],
-                                })
-                            } catch (error) {
-                                console.error('Failed to save chat', error)
-                            }
-                        }
+                        await saveMessages({
+                            messages: messages.map((message) => ({
+                                id: message.id,
+                                role: message.role,
+                                parts: message.parts,
+                                createdAt: new Date(),
+                                attachments: [],
+                                chatId: id,
+                            })),
+                        })
                     },
                     experimental_telemetry: {
                         isEnabled: true,
