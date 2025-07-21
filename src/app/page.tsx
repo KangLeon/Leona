@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Aurora from '@/components/Aurora'
@@ -16,6 +16,8 @@ import RotatingText from '@/components/RotatingText'
 import StarBorder from '@/components/StarBorder/StarBorder'
 import Footer from '@/components/Footer'
 
+import { quickStart } from 'web-demo-player'
+
 export default function Home() {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
@@ -24,6 +26,11 @@ export default function Home() {
         setIsLoading(true)
         router.push('/chat')
     }
+
+    useEffect(() => {
+        // 初始化web-demo-player
+        quickStart()
+    }, [])
 
     // 选择pro计划
     const handleChooseProPlan = async () => {}
