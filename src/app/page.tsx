@@ -28,43 +28,6 @@ export default function Home() {
     // 选择pro计划
     const handleChooseProPlan = async () => {}
 
-    // 动态加载 demo-player.js
-    useEffect(() => {
-        const script = document.createElement('script')
-        script.src = '/demo-player.js'
-        script.onload = () => {
-            console.log('🎬 DemoPlayer 脚本加载成功')
-            // 发送初始化完成消息
-            window.parent.postMessage(
-                {
-                    type: 'LEONA_READY',
-                },
-                '*'
-            )
-        }
-        script.onerror = () => {
-            console.error('❌ DemoPlayer 脚本加载失败')
-            // 仍然发送就绪消息，但没有播放功能
-            window.parent.postMessage(
-                {
-                    type: 'LEONA_READY',
-                },
-                '*'
-            )
-        }
-        document.head.appendChild(script)
-
-        return () => {
-            // 清理脚本
-            const existingScript = document.querySelector(
-                'script[src="/demo-player.js"]'
-            )
-            if (existingScript) {
-                existingScript.remove()
-            }
-        }
-    }, [])
-
     return (
         <div className="min-h-screen flex flex-col bg-black text-white relative">
             <div className="fixed inset-0 z-0">
