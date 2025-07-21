@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Aurora from '@/components/Aurora'
