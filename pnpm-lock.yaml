@@ -162,8 +162,8 @@ importers:
         specifier: ^11.1.0
         version: 11.1.0
       web-demo-player:
-        specifier: ^1.0.7
-        version: 1.0.7
+        specifier: ^1.0.8
+        version: 1.0.8
       zod:
         specifier: ^3.24.3
         version: 3.25.75
@@ -3605,8 +3605,8 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  web-demo-player@1.0.7:
-    resolution: {integrity: sha512-amgzXoAO38WDeSNucBd25VVwGqFGUtUsBa+eaxAszc6q3KDoO4MPuTwGEtqomWmxoz0SUhinkNr/DHhCGFFubw==}
+  web-demo-player@1.0.8:
+    resolution: {integrity: sha512-0F07KBw5NzGJ3HvA7FhEgJPJECJ5EZxP6HvnsKOlds07AbXL6VO8pr+9qo+V0tlJ8kQm1bgCenklGpW27/sfTA==}
 
   web-namespaces@2.0.1:
     resolution: {integrity: sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==}
@@ -7332,7 +7332,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
 
-  web-demo-player@1.0.7: {}
+  web-demo-player@1.0.8: {}
 
   web-namespaces@2.0.1: {}
 
